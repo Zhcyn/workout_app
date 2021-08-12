@@ -9,12 +9,18 @@
 /* Begin PBXBuildFile section */
 		BBB8EF4626C578980024D571 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF4526C578980024D571 /* AppDelegate.swift */; };
 		BBB8EF4826C578980024D571 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF4726C578980024D571 /* SceneDelegate.swift */; };
-		BBB8EF4A26C578980024D571 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF4926C578980024D571 /* ActivityViewController.swift */; };
 		BBB8EF4D26C578980024D571 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBB8EF4B26C578980024D571 /* Main.storyboard */; };
 		BBB8EF4F26C578A10024D571 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBB8EF4E26C578A10024D571 /* Assets.xcassets */; };
 		BBB8EF5226C578A10024D571 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBB8EF5026C578A10024D571 /* LaunchScreen.storyboard */; };
 		BBB8EF5D26C578A10024D571 /* workout_sencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF5C26C578A10024D571 /* workout_sencyTests.swift */; };
 		BBB8EF6826C578A10024D571 /* workout_sencyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF6726C578A10024D571 /* workout_sencyUITests.swift */; };
+		BBB8EF8326C57CF20024D571 /* SetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF8226C57CF20024D571 /* SetupViewController.swift */; };
+		BBB8EF8826C57D2B0024D571 /* SummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF8726C57D2B0024D571 /* SummaryViewController.swift */; };
+		BBB8EF8E26C57D990024D571 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF8D26C57D990024D571 /* Constants.swift */; };
+		BBB8EF9926C5809E0024D571 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF9826C5809E0024D571 /* ActivityViewController.swift */; };
+		BBB8EF9E26C581B70024D571 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF9D26C581B70024D571 /* Extension.swift */; };
+		BBB8EFA326C585A70024D571 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EFA226C585A70024D571 /* Utils.swift */; };
+		BBB8EFA826C5A5AE0024D571 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EFA726C5A5AE0024D571 /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +44,6 @@
 		BBB8EF4226C578980024D571 /* workout_sency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = workout_sency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBB8EF4526C578980024D571 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BBB8EF4726C578980024D571 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		BBB8EF4926C578980024D571 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		BBB8EF4C26C578980024D571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BBB8EF4E26C578A10024D571 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BBB8EF5126C578A10024D571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +54,13 @@
 		BBB8EF6326C578A10024D571 /* workout_sencyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = workout_sencyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBB8EF6726C578A10024D571 /* workout_sencyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = workout_sencyUITests.swift; sourceTree = "<group>"; };
 		BBB8EF6926C578A10024D571 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BBB8EF8226C57CF20024D571 /* SetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupViewController.swift; sourceTree = "<group>"; };
+		BBB8EF8726C57D2B0024D571 /* SummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryViewController.swift; sourceTree = "<group>"; };
+		BBB8EF8D26C57D990024D571 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		BBB8EF9826C5809E0024D571 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		BBB8EF9D26C581B70024D571 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		BBB8EFA226C585A70024D571 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		BBB8EFA726C5A5AE0024D571 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,9 +111,11 @@
 		BBB8EF4426C578980024D571 /* workout_sency */ = {
 			isa = PBXGroup;
 			children = (
+				BBB8EF8C26C57D850024D571 /* Utils */,
+				BBB8EF7E26C57C550024D571 /* Models */,
+				BBB8EF7D26C57C0E0024D571 /* View Controllers */,
 				BBB8EF4526C578980024D571 /* AppDelegate.swift */,
 				BBB8EF4726C578980024D571 /* SceneDelegate.swift */,
-				BBB8EF4926C578980024D571 /* ActivityViewController.swift */,
 				BBB8EF4B26C578980024D571 /* Main.storyboard */,
 				BBB8EF4E26C578A10024D571 /* Assets.xcassets */,
 				BBB8EF5026C578A10024D571 /* LaunchScreen.storyboard */,
@@ -126,6 +140,34 @@
 				BBB8EF6926C578A10024D571 /* Info.plist */,
 			);
 			path = workout_sencyUITests;
+			sourceTree = "<group>";
+		};
+		BBB8EF7D26C57C0E0024D571 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				BBB8EF8226C57CF20024D571 /* SetupViewController.swift */,
+				BBB8EF8726C57D2B0024D571 /* SummaryViewController.swift */,
+				BBB8EF9826C5809E0024D571 /* ActivityViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		BBB8EF7E26C57C550024D571 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BBB8EFA726C5A5AE0024D571 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		BBB8EF8C26C57D850024D571 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				BBB8EF8D26C57D990024D571 /* Constants.swift */,
+				BBB8EF9D26C581B70024D571 /* Extension.swift */,
+				BBB8EFA226C585A70024D571 /* Utils.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,9 +300,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBB8EF4A26C578980024D571 /* ActivityViewController.swift in Sources */,
+				BBB8EF8326C57CF20024D571 /* SetupViewController.swift in Sources */,
+				BBB8EF9926C5809E0024D571 /* ActivityViewController.swift in Sources */,
+				BBB8EF9E26C581B70024D571 /* Extension.swift in Sources */,
 				BBB8EF4626C578980024D571 /* AppDelegate.swift in Sources */,
 				BBB8EF4826C578980024D571 /* SceneDelegate.swift in Sources */,
+				BBB8EF8826C57D2B0024D571 /* SummaryViewController.swift in Sources */,
+				BBB8EFA826C5A5AE0024D571 /* Models.swift in Sources */,
+				BBB8EF8E26C57D990024D571 /* Constants.swift in Sources */,
+				BBB8EFA326C585A70024D571 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
