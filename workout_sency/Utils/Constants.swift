@@ -15,8 +15,8 @@ struct Design {
     //colors
     static let blackColor = UIColor.black
     static let whiteColor = UIColor.white
-    static let lightPinkBtnColor = UIColor(hex: "#F9DAEB")
-    static let darkPinkBtnColor = UIColor(hex: "#EC509E")
+    static let lightPinkBtnColor = UIColor("#F9DAEB")
+    static let darkPinkBtnColor = UIColor("#EC509E")
 }
 
 struct Constants {

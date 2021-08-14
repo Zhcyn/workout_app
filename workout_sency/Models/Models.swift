@@ -7,12 +7,17 @@
 
 import Foundation
 
-enum workoutState {
+enum WorkoutState {
     case pause
     case resume
 }
 
-class Exercise {
+enum SequanceState {
+    case setup
+    case re_setup
+}
+
+struct Exercise : Codable {
     var name: String?
     var start_time: Int? //TODO: think about which type to use
     var total_time: Int? //TODO: the same as above
@@ -35,7 +40,7 @@ class Exercise {
     
 }
 
-class CompletedWorkout {
+struct CompletedWorkout : Codable {
     var name: String?
     var total_time: Int? //TODO: the same as above
     
@@ -45,7 +50,7 @@ class CompletedWorkout {
     }
 }
 
-class InitialWorkoutsData {
+struct InitialWorkoutsData : Codable {
     var total_time: Int? //int?
     var exercises:[Exercise]?
     var setup_sequance: String?
@@ -54,7 +59,7 @@ class InitialWorkoutsData {
     
 }
 
-struct ReSetupSeq {
+struct ReSetupSeq : Codable {
     var type: String?
     var code: Int?
     
@@ -64,7 +69,7 @@ struct ReSetupSeq {
     }
 }
 
-class CompletedWorkoutsData {
+struct CompletedWorkoutsData : Codable {
     var total_time_completed: Int?
     var exercises_cpmleted: [CompletedWorkout]?
     

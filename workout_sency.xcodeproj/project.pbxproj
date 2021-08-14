@@ -21,6 +21,8 @@
 		BBB8EF9E26C581B70024D571 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EF9D26C581B70024D571 /* Extension.swift */; };
 		BBB8EFA326C585A70024D571 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EFA226C585A70024D571 /* Utils.swift */; };
 		BBB8EFA826C5A5AE0024D571 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EFA726C5A5AE0024D571 /* Models.swift */; };
+		BBB8EFAE26C66A580024D571 /* SetupSeqBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EFAD26C66A580024D571 /* SetupSeqBtn.swift */; };
+		BBB8EFB626C6A1DD0024D571 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB8EFB526C6A1DD0024D571 /* Services.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,8 @@
 		BBB8EF9D26C581B70024D571 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		BBB8EFA226C585A70024D571 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		BBB8EFA726C5A5AE0024D571 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		BBB8EFAD26C66A580024D571 /* SetupSeqBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupSeqBtn.swift; sourceTree = "<group>"; };
+		BBB8EFB526C6A1DD0024D571 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +115,7 @@
 		BBB8EF4426C578980024D571 /* workout_sency */ = {
 			isa = PBXGroup;
 			children = (
+				BBB8EFAC26C669C90024D571 /* CustomUI */,
 				BBB8EF8C26C57D850024D571 /* Utils */,
 				BBB8EF7E26C57C550024D571 /* Models */,
 				BBB8EF7D26C57C0E0024D571 /* View Controllers */,
@@ -120,6 +125,7 @@
 				BBB8EF4E26C578A10024D571 /* Assets.xcassets */,
 				BBB8EF5026C578A10024D571 /* LaunchScreen.storyboard */,
 				BBB8EF5326C578A10024D571 /* Info.plist */,
+				BBB8EFB526C6A1DD0024D571 /* Services.swift */,
 			);
 			path = workout_sency;
 			sourceTree = "<group>";
@@ -168,6 +174,14 @@
 				BBB8EFA226C585A70024D571 /* Utils.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		BBB8EFAC26C669C90024D571 /* CustomUI */ = {
+			isa = PBXGroup;
+			children = (
+				BBB8EFAD26C66A580024D571 /* SetupSeqBtn.swift */,
+			);
+			path = CustomUI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -302,6 +316,8 @@
 			files = (
 				BBB8EF8326C57CF20024D571 /* SetupViewController.swift in Sources */,
 				BBB8EF9926C5809E0024D571 /* ActivityViewController.swift in Sources */,
+				BBB8EFAE26C66A580024D571 /* SetupSeqBtn.swift in Sources */,
+				BBB8EFB626C6A1DD0024D571 /* Services.swift in Sources */,
 				BBB8EF9E26C581B70024D571 /* Extension.swift in Sources */,
 				BBB8EF4626C578980024D571 /* AppDelegate.swift in Sources */,
 				BBB8EF4826C578980024D571 /* SceneDelegate.swift in Sources */,
