@@ -38,7 +38,7 @@ class SetupViewController: UIViewController {
         Service.getData {[weak self] (workoutData) in
             if let workout = workoutData {
                 self?.initWorkout = workout
-                
+
                 UserDefaults.standard.set(workout.totalTime, forKey: UserDefaultsKeys.totalWorkoutTimeKey)
                 UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isInResumeStateKey)
                 Utils.saveExercisesToUserDefaults(exercises: workout.exercises)

@@ -16,6 +16,7 @@ class Service {
             print("Error: cannot create URL")
             return
         }
+        print("url \(url), workout data\(dataToPost)")
         guard let jsonData = try? JSONEncoder().encode(dataToPost) else {
             print("Error: Trying to convert model to JSON data")
             return
@@ -25,7 +26,7 @@ class Service {
         
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.httpBody = jsonData
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
