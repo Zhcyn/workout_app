@@ -12,7 +12,7 @@ class Service {
     public static func postData(dataToPost: CompletedWorkoutsData) {
         print("\n-------Posting------\n")
         
-        guard let url = URL(string: "https://ios-interviews.dev.fitvdev.com/addWorkoutSummary") else {
+        guard let url = URL(string: Constants.Urls.postUrl) else {
             print("Error: cannot create URL")
             return
         }
@@ -83,7 +83,7 @@ class Service {
     
     
     public static func getData(completion: @escaping (InitialWorkoutsData?) -> ()) {
-        guard let url = URL(string: "https://ios-interviews.dev.fitvdev.com/getWorkoutDetails") else {
+        guard let url = URL(string: Constants.Urls.getUrl) else {
             print("Error: cannot create URL")
             return
         }

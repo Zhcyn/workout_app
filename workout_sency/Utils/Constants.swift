@@ -34,7 +34,13 @@ struct Constants {
     
     static let between = "between"
     static let inside = "inside"
+    
+    struct Urls {
+        static let getUrl = "https://ios-interviews.dev.fitvdev.com/getWorkoutDetails"
+        static let postUrl = "https://ios-interviews.dev.fitvdev.com/addWorkoutSummary"
+    }
 }
+
 
 struct UserDefaultsKeys {
     static let generalTimerKey = "generalTimerKey"
