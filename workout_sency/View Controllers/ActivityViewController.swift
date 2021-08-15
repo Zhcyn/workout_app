@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol ResumeWorkoutDelegate: class {
+    func resume(workoutState: SequanceState?)
+}
+
 class ActivityViewController: UIViewController {
     
     let currentExerciseNameLbl: UILabel = {
@@ -22,8 +26,7 @@ class ActivityViewController: UIViewController {
         let lbl = UILabel()
         lbl.text = "00:00"
         lbl.numberOfLines = 0
-        //        lbl.isUserInteractionEnabled = false
-        lbl.textColor = UIColor.red //TODO: change to white
+        lbl.textColor = Design.whiteColor
         lbl.font = Design.defaultFontWithSize(size: 24)
         lbl.sizeToFit()
         lbl.adjustsFontSizeToFitWidth = true
@@ -44,136 +47,66 @@ class ActivityViewController: UIViewController {
         let btn = UIButton()
         btn.setTitle(Constants.pauseStr, for: .normal)
         btn.backgroundColor = Design.whiteColor
-        btn.setTitleColor(Design.blackColor, for: .normal) //TODO: check other states?
-        Utils.roundedBtnCorners(button: btn, radius: 19)
+        btn.setTitleColor(Design.blackColor, for: .normal)
+        btn.roundBtn(radius: 19, borderColor: UIColor.clear.cgColor)
         return btn
     }()
-    
-    var currentState: WorkoutState = .pause //intial state when a workout begins
+    //timer related vars
     var generalTimer:Timer?
     var exerciseTimer:Timer?
-    
     var generalTimerCount = 0
     var exerciseTimerCount = 0
-    var timeUntilGeneralPaused = TimeInterval()
-    var timeUntilExercisePaused = TimeInterval()
-
     
-    var exercises: [Exercise?] = []
+    var exercises: [Exercise] = []
     var workoutTotalTime: Int?
     var currentExerciseIndex: Int = -1
+    var currentExerciseState: SequanceState?
+    weak var delegate:ResumeWorkoutDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.isNavigationBarHidden = true
+        
+        configUI()
+        
+        workoutTotalTime = UserDefaults.standard.integer(forKey: UserDefaultsKeys.totalWorkoutTimeKey)
+        
+        if let exercisesUserDefaults = Utils.getExercisesFromUserDefaults() {
+            exercises = exercisesUserDefaults
+            print("Exercises from user defaults: \(exercises)")
+        }
+        else {
+            print("Couldn't retrive exersice info")
+        }
+        
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isInResumeStateKey) {
+            //reset timer to their counters, exercise index
+            resetTimersAndCurrentEx()
+            
+            UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isInResumeStateKey)
+        }
+        else {
+            //first time launce
+            loadFirstExercise()
+        }
+        
+        //start timers
+        generalTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireGTimer), userInfo: nil, repeats: true)
+        exerciseTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireExerciseTimer), userInfo: nil, repeats: true)
+        
+    }
+    
+    func configUI() {
         view.backgroundColor = Design.blackColor
         
         addSubViews()
-        
         setUpGenarelTimerLbl()
         setUpCurrentExerciseNameLbl()
         setUpRemainingTimerLbl()
         setUpPauseBtn()
         
-        //start workout
-        generalTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireGTimer), userInfo: nil, repeats: true)
-        exerciseTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireExerciseTimer), userInfo: nil, repeats: true)
-        
         pauseResumeBtn.addTarget(self, action: #selector(pauseBtnTapped), for: .touchUpInside)
-        
-    }
-    
-    @objc func fireGTimer() {
-        print("Timer fired!")
-        
-        if generalTimerCount == workoutTotalTime {
-            stopGTimer()
-        }
-        
-        generalTimerCount += 1
-        
-        let seconds = String(format: "%02d", (generalTimerCount%60))
-        let minutes = String(format: "%02d", generalTimerCount/60)
-        
-        genarelTimerLbl.text = "\(minutes):\(seconds)"
-    }
-    
-    func stopGTimer() {
-        generalTimer?.invalidate()
-        endWorkout()
-    }
-    
-    func stopExerciseTimer() {
-        exerciseTimer?.invalidate()
-    }
-    
-    func resumeTimers() {
-        
-    }
-    
-    @objc func fireExerciseTimer()  {
-        print("Timer fired!")
-        
-        if generalTimerCount == 0 {
-            loadFirstExercise()
-        }
-        else {
-            loadNextExercise()
-        }
-        
-        exerciseTimerCount -= 1
-        
-        let seconds = String(format: "%02d", (exerciseTimerCount%60))
-        let minutes = String(format: "%02d", exerciseTimerCount/60)
-        remainingTimerLbl.text = "\(minutes):\(seconds)"
-        
-    }
-    
-    func loadNextExercise() {
-        //if current exercise is the last one
-        if currentExerciseIndex == exercises.count - 1 {
-            //last exercise
-            if exercises[currentExerciseIndex]?.start_time == generalTimerCount, let startTime = exercises[currentExerciseIndex]?.start_time, let totalTime = exercises[currentExerciseIndex]?.total_time {
-                //start the last exercise
-                configExercise(exerciseName: exercises[currentExerciseIndex]?.name ?? "", exerciseCounter: totalTime - startTime)
-            }
-            else if exercises[currentExerciseIndex]?.total_time == generalTimerCount, let workoutTotalT = workoutTotalTime {
-                //start last rest
-                configExercise(exerciseName: Constants.restStr, exerciseCounter: workoutTotalT - generalTimerCount)
-            }
-        }
-        else {
-            if let nextExercise = exercises[currentExerciseIndex + 1], let startTime = nextExercise.start_time, let totalTime = nextExercise.total_time {
-                if generalTimerCount == exercises[currentExerciseIndex]?.total_time {
-                    //if current workout has ended- start rest phase
-                    configExercise(exerciseName: Constants.restStr, exerciseCounter: startTime - generalTimerCount)
-                }
-                else if generalTimerCount == startTime {
-                    currentExerciseIndex += 1
-                    
-                    //new exercise is beginning- reset the workout timer and current workout name
-                    configExercise(exerciseName: nextExercise.name ?? "", exerciseCounter: totalTime - generalTimerCount)
-                }
-            }
-        }
-    }
-    
-    func configExercise(exerciseName: String, exerciseCounter: Int){
-        currentExerciseNameLbl.text = exerciseName
-        exerciseTimerCount = exerciseCounter
-    }
-    
-    func loadFirstExercise() {
-        guard let firstEx = exercises[0] , exercises.count > 0 , !exercises.isEmpty else {
-            print("Exercises data is empty")
-            return
-        }
-        currentExerciseIndex = 0
-        
-        if let totalTime = firstEx.total_time, generalTimerCount < totalTime {
-            configExercise(exerciseName: firstEx.name ?? "", exerciseCounter: totalTime - generalTimerCount)
-        }
-        
     }
     
     func addSubViews() {
@@ -184,37 +117,25 @@ class ActivityViewController: UIViewController {
     }
     
     func setUpCurrentExerciseNameLbl() {
-        //        currentExerciseNameLbl.frame.size.width = 315
-        //        currentExerciseNameLbl.frame.size.height = 109
-        //        currentExerciseNameLbl.topAnchor.constraint(equalTo: genarelTimerLbl.bottomAnchor, constant: 82.0).isActive = true
         currentExerciseNameLbl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         currentExerciseNameLbl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30).isActive = true
-        //        currentExerciseNameLbl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 30).isActive = true
         currentExerciseNameLbl.topAnchor.constraint(equalTo: view.topAnchor, constant: 202).isActive = true
         currentExerciseNameLbl.widthAnchor.constraint(equalToConstant: 315).isActive = true
         currentExerciseNameLbl.heightAnchor.constraint(equalToConstant: 109).isActive = true
     }
     
     func setUpGenarelTimerLbl() {
-        //        genarelTimerLbl.frame.size.width = 102
-        //        genarelTimerLbl.frame.size.height = 63
         genarelTimerLbl.topAnchor.constraint(equalTo: view.topAnchor, constant: 57).isActive = true
         genarelTimerLbl.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 234).isActive = true
-        //        genarelTimerLbl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -234).isActive = true //left
-        //        genarelTimerLbl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 39).isActive = true //right
-        //        genarelTimerLbl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 693).isActive = true
-        currentExerciseNameLbl.widthAnchor.constraint(equalToConstant: 102).isActive = true
-        currentExerciseNameLbl.heightAnchor.constraint(equalToConstant: 63).isActive = true
+        genarelTimerLbl.widthAnchor.constraint(equalToConstant: 102).isActive = true
+        genarelTimerLbl.heightAnchor.constraint(equalToConstant: 63).isActive = true
     }
     
     func setUpRemainingTimerLbl() {
-        //        remainingTimerLbl.frame.size.width = 261
-        //        remainingTimerLbl.frame.size.height = 63
         remainingTimerLbl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 57).isActive = true
         remainingTimerLbl.topAnchor.constraint(equalTo: view.topAnchor, constant: 366).isActive = true
         remainingTimerLbl.widthAnchor.constraint(equalToConstant: 261).isActive = true
         remainingTimerLbl.heightAnchor.constraint(equalToConstant: 63).isActive = true
-        
     }
     
     func setUpPauseBtn() {
@@ -224,35 +145,170 @@ class ActivityViewController: UIViewController {
         pauseResumeBtn.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 70).isActive = true
     }
     
+    @objc func fireGTimer() {
+        let seconds = String(format: "%02d", (generalTimerCount%60))
+        let minutes = String(format: "%02d", generalTimerCount/60)
+        
+        genarelTimerLbl.text = "\(minutes):\(seconds)"
+        
+        loadNextExercise()
+        
+        if generalTimerCount == workoutTotalTime {
+            endWorkout()
+        }
+        generalTimerCount += 1
+    }
+    
+    @objc func fireExerciseTimer() {
+        exerciseTimerCount -= 1
+        
+        let seconds = String(format: "%02d", (exerciseTimerCount%60))
+        let minutes = String(format: "%02d", exerciseTimerCount/60)
+        
+        remainingTimerLbl.text = "\(minutes):\(seconds)"
+    }
+    
+    func stopGTimer() {
+        generalTimer?.invalidate()
+        UserDefaults.standard.set(generalTimerCount, forKey: UserDefaultsKeys.generalTimerKey)
+    }
+    
+    func stopExerciseTimer() {
+        exerciseTimer?.invalidate()
+        UserDefaults.standard.set(exerciseTimerCount, forKey: UserDefaultsKeys.exerciseTimerKey)
+    }
+    
+    func resetTimersAndCurrentEx() {
+        exerciseTimerCount = UserDefaults.standard.integer(forKey: UserDefaultsKeys.exerciseTimerKey)
+        generalTimerCount =  UserDefaults.standard.integer(forKey: UserDefaultsKeys.generalTimerKey)
+        currentExerciseIndex = UserDefaults.standard.integer(forKey: UserDefaultsKeys.currentexerciseIndexKey)
+        currentExerciseNameLbl.text = UserDefaults.standard.string(forKey: UserDefaultsKeys.currentExerciseNameKey)
+    }
+    
+    func loadFirstExercise() { //when launched for the first time
+        if currentExerciseIndex == -1, !exercises.isEmpty {
+            currentExerciseIndex = 0
+            
+            //start rest time immediately (if necessary)
+            if generalTimerCount < exercises[currentExerciseIndex].startTime {
+                configExercise(exerciseName: Constants.restStr, exerciseCounter: exercises[currentExerciseIndex].startTime - generalTimerCount)
+                currentExerciseState = .reSetupBetween
+            }
+            else {
+                currentExerciseNameLbl.text = exercises.first?.name
+            }
+        }
+    }
+    
+    func loadNextExercise() {
+        /*
+         I consider each workout interval as inclusive [startTime, endTime]
+         */
+        
+        guard !exercises.isEmpty, currentExerciseIndex > -1 else {return}
+        
+        //start rest time immediately (if necessary)
+        if generalTimerCount < exercises[currentExerciseIndex].startTime {
+            configExercise(exerciseName: Constants.restStr, exerciseCounter: exercises[currentExerciseIndex].startTime - generalTimerCount)
+            currentExerciseState = .reSetupBetween
+        }
+        if generalTimerCount  == exercises[currentExerciseIndex].startTime {
+            //start exercise
+            print("Starting new exercise \(exercises[currentExerciseIndex].name) in time \(exercises[currentExerciseIndex].startTime), timer is \(generalTimerCount)")
+            
+            configExercise(exerciseName: exercises[currentExerciseIndex].name, exerciseCounter: exercises[currentExerciseIndex].totalTime - exercises[currentExerciseIndex].startTime + 1)
+            currentExerciseState = .reSetupInside
+        }
+        
+        //start rest between exercises
+        if generalTimerCount == exercises[currentExerciseIndex].totalTime + 1{
+            if currentExerciseIndex == exercises.count - 1, let workoutTotalT = workoutTotalTime {
+                //if current exercise is the last one
+                
+                configExercise(exerciseName: Constants.restStr, exerciseCounter: workoutTotalT - generalTimerCount + 1)
+            }
+            else {
+                let nextExercise = exercises[currentExerciseIndex + 1]
+                //if current workout has ended- start rest phase
+                print("Starting new rest in time \(nextExercise.startTime - exercises[currentExerciseIndex].totalTime + 1), timer is \(generalTimerCount)")
+                
+                configExercise(exerciseName: Constants.restStr, exerciseCounter: nextExercise.startTime - exercises[currentExerciseIndex].totalTime + 1)
+                currentExerciseIndex += 1
+            }
+            currentExerciseState = .reSetupBetween
+        }
+    }
+    
+    func configExercise(exerciseName: String, exerciseCounter: Int){
+        currentExerciseNameLbl.text = exerciseName
+        exerciseTimerCount = exerciseCounter
+    }
+    
     @objc func pauseBtnTapped() {
         pauseWorkout()
-        saveWorkoutDetails()
+        stopGTimer()
+        stopExerciseTimer()
         showPauseAlert()
     }
     
     func pauseWorkout() {
         //pause timers and save their current counters
-        
+        UserDefaults.standard.set(generalTimerCount, forKey: UserDefaultsKeys.generalTimerKey)
+        UserDefaults.standard.set(exerciseTimerCount, forKey: UserDefaultsKeys.exerciseTimerKey)
+        UserDefaults.standard.set(currentExerciseIndex, forKey: UserDefaultsKeys.currentexerciseIndexKey)
+        UserDefaults.standard.set(currentExerciseNameLbl.text, forKey: UserDefaultsKeys.currentExerciseNameKey)
     }
     
     func endWorkout() {
+        stopGTimer()
+        stopExerciseTimer()
         saveWorkoutDetails()
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil) //Know to explain bundle = nil
-        let summaryVc = storyBoard.instantiateViewController(identifier: "summaryVc") as! SummaryViewController
+        
+        UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isInResumeStateKey)
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: Constants.mainStoryBoard, bundle: nil) //Know to explain bundle = nil
+        let summaryVc = storyBoard.instantiateViewController(identifier: Constants.summaryVcId) as! SummaryViewController
+        
+        if let totalTime = workoutTotalTime {
+            summaryVc.successPerc = Utils.calculateSucessPercentage(workoutTotalTime: totalTime, completedTime: generalTimerCount)
+        }
         self.navigationController?.pushViewController(summaryVc, animated: true)
     }
     
     func resumeWorkout() {
+        UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isInResumeStateKey)
+        delegate?.resume(workoutState: currentExerciseState)
         self.navigationController?.popToRootViewController(animated: true)
-        //need to use delegate here later on
     }
     
     func saveWorkoutDetails() {
+        var completedExercises: [CompleteExercise] = []
         
+        for i in 0..<currentExerciseIndex {
+            completedExercises.append(CompleteExercise(name: exercises[i].name, totalTime: exercises[i].totalTime))
+        }
+        var lastExerciseTotalTime = 0
+        
+        if generalTimerCount < exercises[currentExerciseIndex].startTime {
+            lastExerciseTotalTime = 0
+        }
+        else if generalTimerCount >= exercises[currentExerciseIndex].totalTime {
+            lastExerciseTotalTime = exercises[currentExerciseIndex].totalTime
+        }
+        else { //if user haven't completed the current exercise
+            lastExerciseTotalTime = generalTimerCount - exercises[currentExerciseIndex].startTime
+        }
+        
+        if lastExerciseTotalTime != 0 {
+            //if the user didn't begin the first exercise, don't count it
+            completedExercises.append(CompleteExercise(name: exercises[currentExerciseIndex].name, totalTime: lastExerciseTotalTime))
+        }
+        
+        Service.postData(dataToPost:CompletedWorkoutsData(totalTimeCompleted: generalTimerCount, exercisesCompleted: completedExercises))
     }
     
     func showPauseAlert() {
-        let alert = UIAlertController(title: "Workout is paused", message: "Do you want to continue the workout?",  preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "🏋️‍♀️ Workout is in pause mode 🏋️‍♀️", message: "Let's continue to work out, you've got this!",  preferredStyle: UIAlertController.Style.alert)
         
         alert.addAction(UIAlertAction(title: "Resume", style: UIAlertAction.Style.default, handler: {[weak self] _ in
             self?.resumeWorkout()

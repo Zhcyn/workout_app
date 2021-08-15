@@ -7,70 +7,93 @@
 
 import Foundation
 
-enum WorkoutState {
-    case pause
-    case resume
-}
-
 enum SequanceState {
     case setup
-    case re_setup
+    case reSetupInside
+    case reSetupBetween
 }
 
 struct Exercise : Codable {
-    var name: String?
-    var start_time: Int? //TODO: think about which type to use
-    var total_time: Int? //TODO: the same as above
+    var name: String
+    var startTime: Int
+    var totalTime: Int
     
-    init(name: String?, start_time: Int?, total_time: Int? ) { //maybe use  convenience init?
+    init(name: String, startTime: Int, totalTime: Int) {
         self.name = name
-        self.start_time = start_time
-        self.total_time = total_time
+        self.startTime = startTime
+        self.totalTime = totalTime
     }
-//
-//    convenience init?(dict: RawJsonFormat?) {
-//        guard let lat = dict?["latitude"] as? String,let long = dict?["longitude"] as? String else {
-//            return nil
-//        }
-//
-//        self.init(latitude:lat,longitude:long)
-//    }
     
-    //Geters and setters funcs
-    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case startTime = "start_time"
+        case totalTime = "total_time"
+    }
 }
 
-struct CompletedWorkout : Codable {
-    var name: String?
-    var total_time: Int? //TODO: the same as above
+struct CompleteExercise : Codable {
+    var name: String
+    var totalTime: Int
     
-    init(name: String, total_time: Int? ) { //maybe use  convenience init?
+    init(name: String, totalTime: Int) {
         self.name = name
-        self.total_time = total_time
+        self.totalTime = totalTime
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case totalTime = "total_time"
     }
 }
 
 struct InitialWorkoutsData : Codable {
-    var total_time: Int? //int?
-    var exercises:[Exercise]?
-    var setup_sequance: String?
-    var re_setup_sequance: [ReSetupSeq]?
+    var totalTime: Int
+    var exercises:[Exercise]
+    var setupSeq: String
+    var reSetupSeq: [ReSetupSeq]
     
+    init(totalTime: Int, exercises: [Exercise], setupSeq: String, reSetupSeq: [ReSetupSeq]) {
+        self.totalTime = totalTime
+        self.exercises = exercises
+        self.setupSeq = setupSeq
+        self.reSetupSeq = reSetupSeq
+    }
     
+    enum CodingKeys: String, CodingKey {
+        case totalTime = "total_time"
+        case exercises
+        case setupSeq = "setup_sequence"
+        case reSetupSeq = "re_setup_sequence"
+    }
 }
 
 struct ReSetupSeq : Codable {
-    var type: String?
-    var code: Int?
+    var type: String
+    var code: Int
     
-    init(type: String?, code: Int?) {
+    init(type: String, code: Int) {
         self.type = type
         self.code = code
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case type
+        case code
     }
 }
 
 struct CompletedWorkoutsData : Codable {
-    var total_time_completed: Int?
-    var exercises_cpmleted: [CompletedWorkout]?
+    var totalTimeCompleted: Int
+    var exercisesCompleted: [CompleteExercise?]
+    
+    init(totalTimeCompleted: Int, exercisesCompleted: [CompleteExercise?]) {
+        self.totalTimeCompleted = totalTimeCompleted
+        self.exercisesCompleted = exercisesCompleted
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case totalTimeCompleted = "total_time_completed"
+        case exercisesCompleted = "exercises_completed"
+    }
     
 }

@@ -11,21 +11,42 @@ class SetupViewController: UIViewController {
     
     var horizStackV1 = UIStackView() //first row stack view
     var horizStackV2 = UIStackView() //second row stack view
-//    var parentStackV = UIStackView() //container stack view for both rows
     var buttonsArr = [SetupSeqBtn]()
     
-//    let button = SetupSeqBtn()
-    
-//    let buttonsNum = 6
-    
     var seqState: SequanceState = .setup //initial state
+    var initWorkout: InitialWorkoutsData?
+    
+    var pattern = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //UI config
         configButtonsArr()
         configHorizStackV1()
         configHorizStackV2()
+        
+        fetchData()
+        
+        self.navigationController?.isNavigationBarHidden = true
+        
+    }
+    
+    func fetchData() {
+        print("\n-------Fetch data func----------\n")
+        
+        Service.getData {[weak self] (workoutData) in
+            if let workout = workoutData {
+                self?.initWorkout = workout
+                
+                UserDefaults.standard.set(workout.totalTime, forKey: UserDefaultsKeys.totalWorkoutTimeKey)
+                UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isInResumeStateKey)
+                Utils.saveExercisesToUserDefaults(exercises: workout.exercises)
+            }
+            else {
+                print("Couldn't retrive workout data- workout is nil")
+            }
+        }
     }
     
     func configHorizStackV1() {
@@ -65,51 +86,110 @@ class SetupViewController: UIViewController {
     func configButtonsArr() {
         let startChar = Unicode.Scalar("A").value
         let endChar = Unicode.Scalar("F").value
-        var i = 0
-        for alphabet in startChar...endChar {
-            i += 1
-            let btn = SetupSeqBtn()
-            if let char = Unicode.Scalar(alphabet) {
-                btn.setTitle("\(char)", for: .normal)
-            }
-            btn.translatesAutoresizingMaskIntoConstraints = true
-            btn.addTarget(self, action: #selector(buttonTapped(senderBtn:)), for: .touchUpInside)
-            btn.tag = i
-            buttonsArr.append(btn)
-        }
         
-        buttonsArr.forEach { (btn) in
+        for alphabet in startChar...endChar {
+            let btn = SetupSeqBtn()
+            
+            if seqState == .setup {
+                //set letters title to buttons
+                if let char = Unicode.Scalar(alphabet) {
+                    btn.setTitle("\(char)", for: .normal)
+                }
+            }
+            
+            btn.addTarget(self, action: #selector(buttonTapped(senderBtn:)), for: .touchUpInside)
             btn.translatesAutoresizingMaskIntoConstraints = false
             btn.widthAnchor.constraint(equalToConstant: 90).isActive = true
             btn.heightAnchor.constraint(equalToConstant: 90).isActive = true
+            
+            buttonsArr.append(btn)
         }
     }
     
     func addButtonsToStack(startIdx: Int, endIdx: Int, stackV: UIStackView) {
         for i in startIdx..<endIdx {
-//            if let foundView = view.viewWithTag(i) {
-                stackV.addArrangedSubview(buttonsArr[i])
-//            }
+            stackV.addArrangedSubview(buttonsArr[i])
         }
     }
     
     @objc func buttonTapped(senderBtn: UIButton) {
         //change color and change previous button color
-        //TODO: maybe to keep an index of the latest pressed button and change it only
-        buttonsArr.forEach { (btn) in
-            btn.backgroundColor = Design.lightPinkBtnColor
-            btn.setTitleColor(Design.blackColor, for: .normal)
+        
+        senderBtn.changeColorAnim(backgroundColor: Design.darkPinkBtnColor ?? .systemPink, fontColor: Design.whiteColor)
+        
+        pattern.append(senderBtn.titleLabel?.text ?? "")
+        
+        if pattern.count == 4 {
+            if isSeqMatch(pattern: pattern){
+                moveToActivitynVc()
+            }
+            else {
+                horizStackV1.shake()
+                horizStackV2.shake()
+                pattern = ""
+            }
         }
-        senderBtn.backgroundColor = Design.darkPinkBtnColor
-        senderBtn.setTitleColor(Design.whiteColor, for: .normal)
-        moveToActivitynVc()
     }
     
     func moveToActivitynVc() {
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil) //Know to explain bundle = nil
-        let activityVc = storyBoard.instantiateViewController(identifier: "activityVc") as! ActivityViewController
+        let storyBoard: UIStoryboard = UIStoryboard(name: Constants.mainStoryBoard, bundle: nil)
+        let activityVc = storyBoard.instantiateViewController(identifier: Constants.activityVcId) as! ActivityViewController
+        
+        if let workout = initWorkout {
+            activityVc.workoutTotalTime = workout.totalTime
+            activityVc.exercises = workout.exercises
+        }
+        else {
+            print("workout data is nil")
+        }
+        activityVc.delegate = self
+        
         self.navigationController?.pushViewController(activityVc, animated: true)
     }
     
+    func isSeqMatch(pattern: String) -> Bool {
+        switch seqState {
+        case .setup:
+            return pattern.lowercased() == initWorkout?.setupSeq.lowercased()
+        case .reSetupBetween:
+            let seq = getReSetupSeqCode(type: Constants.between)
+            if seq != "" {
+                return pattern == seq
+            }
+            return false
+        case .reSetupInside:
+            let seq = getReSetupSeqCode(type: Constants.inside)
+            if seq != "" {
+                return pattern == seq
+            }
+            return false
+        }
+    }
+    
+    func getReSetupSeqCode(type: String) -> String {
+        if let i = initWorkout?.reSetupSeq.firstIndex(where: { $0.type == type }) {
+            guard let code = initWorkout?.reSetupSeq[i].code else {
+                return ""
+            }
+            return String(code)
+        }
+        return ""
+    }
+}
+
+extension SetupViewController: ResumeWorkoutDelegate {
+    func resume(workoutState: SequanceState?) {
+        print("resume workout setup")
+        for i in 0..<buttonsArr.count {
+            buttonsArr[i].setTitle("\(i+1)", for: .normal)
+        }
+        if let state = workoutState {
+            seqState = state
+            pattern = ""
+        }
+        else {
+            print("workout state is nil")
+        }
+    }
     
 }

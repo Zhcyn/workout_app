@@ -26,4 +26,23 @@ struct Constants {
     static let summaryStr1 = "Not bad, try harder next time!" //0-30%
     static let summaryStr2 = "Well done, you nailed it!" //30-60%
     static let summaryStr3 = "Champion, it's too easy for you!" //60-100%
+    
+    static let setupVcId = "setupVc"
+    static let activityVcId = "activityVc"
+    static let summaryVcId = "summaryVc"
+    static let mainStoryBoard = "Main"
+    
+    static let between = "between"
+    static let inside = "inside"
+}
+
+struct UserDefaultsKeys {
+    static let generalTimerKey = "generalTimerKey"
+    static let exerciseTimerKey = "exerciseTimerKey"
+    static let currentexerciseIndexKey = "currentexerciseIndexKey"
+    static let totalWorkoutTimeKey = "totalWorkoutTimeKey"
+    static let isInResumeStateKey = "isInResumeStateKey"
+    static let exercisesKey = "exercisesKey"
+    static let currentExerciseNameKey = "currentExerciseNameKey"
+
 }

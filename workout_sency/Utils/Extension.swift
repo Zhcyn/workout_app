@@ -51,19 +51,36 @@ extension UIButton {
         layer.borderWidth = 1
         layer.borderColor = borderColor
     }
+    public func roundBtn(radius: CGFloat, borderColor: CGColor = UIColor.black.cgColor) {
+        self.layer.cornerRadius = radius
+        layer.borderWidth = 1
+        layer.borderColor = borderColor
+    }
 }
 
-extension String {
-    func jsonToDictionary() -> RawJsonFormat? {
-        guard let data = self.data(using: .utf8) else { return nil }
-
-        guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? RawJsonFormat else { return nil }
+extension UIButton {
+    func changeColorAnim(backgroundColor: UIColor, fontColor: UIColor) {
+        let currentBackColor = self.backgroundColor
+        let currentFontColor = self.titleLabel?.textColor
         
-        return dictionary
+        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+            self.backgroundColor = backgroundColor
+            self.setTitleColor(fontColor, for: .normal)
+        }, completion:nil )
+        
+        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+            self.backgroundColor = currentBackColor
+            self.setTitleColor(currentFontColor, for: .normal)
+        }, completion:nil )
     }
-    
-    func toJSON() -> Any? {
-         guard let data = self.data(using: .utf8, allowLossyConversion: false) else { return nil }
-         return try? JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-     }
+}
+
+extension UIView {
+    func shake() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+        animation.duration = 0.6
+        animation.values = [-20.0, 20.0, -20.0, 20.0, -10.0, 10.0, -5.0, 5.0, 0.0 ]
+        layer.add(animation, forKey: "shake")
+    }
 }

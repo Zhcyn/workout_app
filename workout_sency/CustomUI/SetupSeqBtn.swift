@@ -15,11 +15,11 @@ class SetupSeqBtn: UIButton {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder) //TODO: explain in the paper why its necesary
+        super.init(coder: coder) 
         setupBtn()
     }
     
-    override func layoutSubviews() { //TODO: explain
+    override func layoutSubviews() { 
         super.layoutSubviews()
         roundBtn()
     }

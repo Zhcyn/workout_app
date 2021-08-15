@@ -10,9 +10,26 @@ import UIKit
 
 class Utils {
     
-    static func roundedBtnCorners(button: UIButton, radius: CGFloat = 5) {
-        button.layer.cornerRadius = radius
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.clear.cgColor
+    public static func saveExercisesToUserDefaults(exercises: [Exercise]) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(exercises) {
+            UserDefaults.standard.set(encoded, forKey: UserDefaultsKeys.exercisesKey)
+        }
     }
+    
+    public static func getExercisesFromUserDefaults() -> [Exercise]? {
+        if let savedExercises = UserDefaults.standard.object(forKey: UserDefaultsKeys.exercisesKey) as? Data {
+            let decoder = JSONDecoder()
+            if let exercises = try? decoder.decode([Exercise].self, from: savedExercises) {
+                return exercises
+            }
+        }
+        return nil
+    }
+    
+    public static func calculateSucessPercentage(workoutTotalTime: Int, completedTime: Int)-> Int {
+        let res = Double(completedTime) / Double(workoutTotalTime)
+        return Int(res * 100)
+    }
+    
 }
